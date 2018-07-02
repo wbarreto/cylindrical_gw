@@ -1,0 +1,16 @@
+&input
+   n=40,
+   m=40,
+   A0=5.d0,
+   sigma=0.25d0,
+   S=0.d0,
+   r0=0.d0,
+   timemax=6.28d0,
+   h=1.d-4,
+   itime=0,
+   idump=10,
+   iref=1,
+   AMR=0.5d0,
+   y0=2.3d0,
+   L0=3.d0
+&end

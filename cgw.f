@@ -66,7 +66,7 @@
 !        write(*,*) i, SBD(2*m+1,i),SBD(2*m+2,i)
 !      end do
 
-!      call initial(n,m,A0,sigma,S,r0,a,b,c,f,y0)
+      call initial(n,m,A0,sigma,S,r0,a,b,c,f,y0)
 
 !      btemp=b
 

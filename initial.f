@@ -38,14 +38,14 @@
       double precision constr11A(m+1),constr12A(m+1)
       double precision constr21A(m+1),constr22A(m+1)
 
-      double precision PIEXT(2*(n+1)),dPIEXT(2*(n+1))
+      double precision PSIEXT(2*(n+1)),dPIEXT(2*(n+1))
 
       double precision M_BASEXT(2*(n+1),2*(n+1)),PI0(2*(n+1))
 !      double precision dM_BASEXT(2*(n+1),2*(n+1))
-!      double precision copy_M_BASEXT(2*(n+1),2*(n+1))
+      double precision copy_M_BASEXT(2*(n+1),2*(n+1))
 !      double precision SBPI(DIM,DIM)
 !      double precision SBDPI(DIM,DIM)
-      double precision copy_PIEXT(2*(n+1))
+      double precision copy_PSIEXT(2*(n+1))
 
       double precision M_EXTENDELTA(2*(m+1),2*(m+1))
       double precision M_EXTENDA(2*(m+1),2*(m+1))
@@ -55,7 +55,7 @@
 
       double precision psi_a,dpsi_a
       double precision psia1,dpsia1
-      double precision a(2*(n+1)),sum,PIa(2*(n+1))
+      double precision a(2*(n+1)),sum,PSIa(2*(n+1))
       double precision b(2*(m+1)),c(2*(m+1))
       double precision dPIa(2*(n+1))
       double precision f(2*n+1)
@@ -80,32 +80,32 @@
 !..........................
 ! First the vector a_n(t) 
 !..........................
-! We get a_n(t) from the initial datum PI0,
+! We get a_n(t) from the initial datum PSI0,
 ! projecting with the basis.
 !
-!
-      PIEXT=0.d0
+      PSIEXT=0.d0
 
       do i=1,2*n
         y=SGRID(i)
         x=pi*(y+1.d0)/4.d0
-        PIEXT(i)=A0*dexp(-dtan(x)**2.d0/sigma**2.d0)
+        PSIEXT(i)=(1.d0/8.d0)*A0*(x**3.d0)*dexp(-4.d0*(x-2.d0)**2.d0) 
+!        write(*,*) x,PSIEXT(i)
       end do
 
-      copy_PIEXT=PIEXT
+      copy_PSIEXT=PSIEXT
 
       do i=1,2*(n+1)
         do j=1,2*(n+1)
-          M_BASEXT(j,i)=SBPI(j,i)
+          M_BASEXT(j,i)=SBPSI(j,i)
         end do
       end do
 
-      call gaussj(M_BASEXT,2*(n+1),2*(n+1),PIEXT,1,2*(1+n))
+      call gaussj(M_BASEXT,2*(n+1),2*(n+1),PSIEXT,1,2*(1+n))
 
 ! .............Here the  vector a_n(t).............
-      a=PIEXT
+      a=PSIEXT
 
-!      do i=1, 2*(n+1)  ! same than Maple script for A0=11!!!!
+!      do i=1, 2*(n+1)  ! same than Maple script for A0=0.3, L0=3.5=y0?
 !        write(*,*) i,a(i)
 !      end do
 
@@ -114,19 +114,19 @@
 ! .............<Begin>................
 ! For checking  (just delete c as commented)
 
-! Reconstruction of the initial PI
+! Reconstruction of the initial PSI
 
-!      sum_error=0.d0
-!      do i=1,2*n 
-!        sum=0.d0
-!        do j=1,2*(n+1) 
-!          sum=sum+SBPI(i,j)*a(j)
-!        end do
-!        PIa(i)=sum
-!        error=(PIa(i)-copy_PIEXT(i))
-!        sum_error=sum_error+error**2
-!        write(*,*) SGRID(i),PIa(i),copy_PIEXT(i),error
-!      end do
+      sum_error=0.d0
+      do i=1,2*n 
+        sum=0.d0
+        do j=1,2*(n+1) 
+          sum=sum+SBPSI(i,j)*a(j)
+        end do
+        PSIa(i)=sum
+        error=(PSIa(i)-copy_PSIEXT(i))
+        sum_error=sum_error+error**2
+        write(*,*) SGRID(i),PSIa(i),copy_PSIEXT(i),error
+      end do
 !      write(*,*) n,sum_error
 !      write(*,*) '........ '
 
@@ -151,7 +151,7 @@ c...................<end>........................
 !............................
 ! Second, the vector f_n(t)
 !............................
-      f=0.d0    ! f has dimension 2n+1 (one collocation point less in D2)
+!      f=0.d0    ! f has dimension 2n+1 (one collocation point less in D2)
 !..........................
 
 !..........................
@@ -270,39 +270,39 @@ c...................<end>........................
 
 ! All the business in what follows....................
 
-      TERMEXT=0.d0
+!      TERMEXT=0.d0
 
-      do i=1,2*m
-        y=SGRID(2*n+i)
-        x=pi*(y+1.d0)/4.d0
-        PIEXTD(i)=A0*dexp(-dtan(x)**2.d0/sigma**2.d0)
-        csext(i)=dcos(x)*dsin(x)
-      end do 
+!      do i=1,2*m
+!        y=SGRID(2*n+i)
+!        x=pi*(y+1.d0)/4.d0
+!        PIEXTD(i)=A0*dexp(-dtan(x)**2.d0/sigma**2.d0)
+!        csext(i)=dcos(x)*dsin(x)
+!      end do 
 
-!      TERMEXT=-pi*0.25d0*PIEXTD*PIEXTD*csext
-      TERMEXT=-PIEXTD*PIEXTD*csext  !!! OJO: asi es como coincide con el script
+!!      TERMEXT=-pi*0.25d0*PIEXTD*PIEXTD*csext
+!      TERMEXT=-PIEXTD*PIEXTD*csext  !!! OJO: asi es como coincide con el script
                                     !!!  de Maple (????)
 
 !      do i=1,2*m
 !        write(*,*) i,TERMEXT(i)
 !      end do
 
-      M_EXTENDELTA=0.d0
+!      M_EXTENDELTA=0.d0
 
-      do j=1,2*(m+1)
-        do i=1,2*m
-!          M_EXTENDELTA(i,j)=SBDD(i,j) 
-          M_EXTENDELTA(i,j)=4.d0*SBDD(i,j)/pi  ! This makes sense...
-        end do
-      end do
+!      do j=1,2*(m+1)
+!        do i=1,2*m
+!!          M_EXTENDELTA(i,j)=SBDD(i,j) 
+!          M_EXTENDELTA(i,j)=4.d0*SBDD(i,j)/pi  ! This makes sense...
+!        end do
+!      end do
    
 !      write(*,*) (M_EXTENDELTA(2,i),i=1,2*(m+1))
 
 
-      do nn=1,2*(m+1)
-         M_EXTENDELTA(2*m+1,nn)=SBD(2*m+1,nn)
-         M_EXTENDELTA(2*m+2,nn)=SBD(2*m+2,nn)
-      end do
+!      do nn=1,2*(m+1)
+!         M_EXTENDELTA(2*m+1,nn)=SBD(2*m+1,nn)
+!         M_EXTENDELTA(2*m+2,nn)=SBD(2*m+2,nn)
+!      end do
 
 !      do i=1,2*(m+1)
 !        write(*,*) M_EXTENDELTA(2*m+1,i)
@@ -312,10 +312,10 @@ c...................<end>........................
 ! (done) the output using the two business models is the same.
 ! Tudo bem. 
 
-      call gaussj(M_EXTENDELTA,2*(m+1),2*(m+1),TERMEXT,1,2*(1+m)) 
+!      call gaussj(M_EXTENDELTA,2*(m+1),2*(m+1),TERMEXT,1,2*(1+m)) 
 
 !.................... 
-      b=TERMEXT
+!      b=TERMEXT
 !....................
 
 !      do i=1,2*(m+1)
@@ -440,40 +440,40 @@ c      end do
 !----------------------------------------
 ! Other way for business...
 
-      TERMEXT=0.d0
+!      TERMEXT=0.d0
 
-      do i=1,2*m
-        y=SGRID(2*n+i)
-        x=pi*(y+1.d0)/4.d0
-        PIEXTD(i)=A0*dexp(-dtan(x)**2.d0/sigma**2.d0)
-        csext(i)=dcos(x)*dsin(x)
-        s2ext(i)=1.d0+2.d0*dsin(x)**2.d0
-      end do
+!      do i=1,2*m
+!        y=SGRID(2*n+i)
+!        x=pi*(y+1.d0)/4.d0
+!        PIEXTD(i)=A0*dexp(-dtan(x)**2.d0/sigma**2.d0)
+!        csext(i)=dcos(x)*dsin(x)
+!        s2ext(i)=1.d0+2.d0*dsin(x)**2.d0
+!      end do
 
-      TERMEXT=-pi*0.25d0*PIEXTD*PIEXTD*csext 
+!      TERMEXT=-pi*0.25d0*PIEXTD*PIEXTD*csext 
 
-      temp1ext=-TERMEXT
-      temp2ext=pi*0.25d0*s2ext/csext
+!      temp1ext=-TERMEXT
+!      temp2ext=pi*0.25d0*s2ext/csext
 
-      M_EXTENDA=0.d0
+!      M_EXTENDA=0.d0
 
-      do j=1,2*(m+1)
-        do i=1,2*m
-          M_EXTENDA(i,j)=SBDA(i,j)+SBA(i,j)*(temp1ext(i)+temp2ext(i))
-        end do
-      end do
+!      do j=1,2*(m+1)
+!        do i=1,2*m
+!          M_EXTENDA(i,j)=SBDA(i,j)+SBA(i,j)*(temp1ext(i)+temp2ext(i))
+!        end do
+!      end do
   
-      do nn=1,2*(m+1)
-         M_EXTENDA(2*m+1,nn)=SBA(2*m+1,nn)
-         M_EXTENDA(2*m+2,nn)=SBA(2*m+2,nn)
-      end do
+!      do nn=1,2*(m+1)
+!         M_EXTENDA(2*m+1,nn)=SBA(2*m+1,nn)
+!         M_EXTENDA(2*m+2,nn)=SBA(2*m+2,nn)
+!      end do
 
 !      write(*,*) (SBA(2*m+1,i),i=1,2*(m+1))
 
-      call gaussj(M_EXTENDA,2*(m+1),2*(m+1),TERMEXT,1,2*(1+m)) 
+!      call gaussj(M_EXTENDA,2*(m+1),2*(m+1),TERMEXT,1,2*(1+m)) 
 
 !.................... 
-      c=TERMEXT
+!      c=TERMEXT
 !....................
 
 !      do i=1,2*(m+1)  ! igual que el script de Maple para A0=11

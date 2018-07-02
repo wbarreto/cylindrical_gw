@@ -1,4 +1,4 @@
-      program axial
+      program cgw
 !---------------------------.-------------------------------------------------
 ! Rio axial code to simulate cylindrical gravitational waves
 ! Referential code: ads with dd
@@ -50,21 +50,15 @@
       dc=0.d0
       df=0.d0
 
-      SBPI=0.d0
-      SBDPI=0.d0
-      SBPHI=0.d0
-      SBDPHI=0.d0
-      SBA=0.d0
-      SBDA=0.d0
-      SBD=0.d0
-      SBDD=0.d0
+      SBPSI=0.d0
+      SBDPSI=0.d0
+      SBOMEGA=0.d0
+      SBDOMEGA=0.d0
       SGRID=0.d0
 
       call frame(n,m,y0,L0,NMAX,
-     .           SBPI,SBDPI,
-     .           SBPHI,SBDPHI,
-     .           SBA,SBDA,
-     .           SBD,SBDD,
+     .           SBPSI,SBDPSI,
+     .           SBOMEGA,SBDOMEGA,
      .           SGRID)
 
 
@@ -109,5 +103,5 @@
 !      close(fp_seq)
 !      close(fp_asymp)
 
-      end program axial     
+      end program cgw    
 

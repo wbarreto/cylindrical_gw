@@ -5,6 +5,8 @@ Final date (ready for production):
 
 CHANGELOG:
 
+Evolving (compiling well and living) code:
+
 - makefile
 - control deck
 - driver (cgw.f)
@@ -21,7 +23,10 @@ Check only one of these stages:
 - still not used in production
 - in production 
 
-TO DO:
+TO DO (next tasks):
 
 - initial data (init.f)
+- Pseudo code
+- Algorithmic
+- History, referential script and codes (pre-codes)
  

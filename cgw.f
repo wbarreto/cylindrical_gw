@@ -16,9 +16,9 @@
 
       include 'base.inc'
 
-      double precision timemax,h,time,A0,sigma,S,r0
-      double precision a(NMAX),b(NMAX),c(NMAX),f(NMAX)
-      double precision da(NMAX),dc(NMAX),df(NMAX)
+      double precision timemax,h,time,A0,B0,S,r0
+      double precision a(NMAX),b(NMAX)
+      double precision da(NMAX),db(NMAX)
       double precision amr,y0,L0
 
       double precision btemp(NMAX)
@@ -28,12 +28,10 @@
  
       logical done
      
-      namelist/input/n,m,A0,sigma,S,r0,timemax,
+      namelist/input/n,m,A0,B0,S,r0,timemax,
      .               h,itime,idump,iref,amr,y0,L0
 
       read (*,input) 
-
-      m=n*13/10
 
 !      fp_data=21
 !      fp_seq=28
@@ -44,11 +42,8 @@
 
       a=0.d0
       b=0.d0
-      c=0.d0
-      f=0.d0
       da=0.d0
-      dc=0.d0
-      df=0.d0
+      db=0.d0
 
       SBPSI=0.d0
       SBDPSI=0.d0
@@ -66,7 +61,7 @@
 !        write(*,*) i, SBD(2*m+1,i),SBD(2*m+2,i)
 !      end do
 
-      call initial(n,m,A0,sigma,S,r0,a,b,c,f,y0)
+      call initial(n,m,A0,B0,a,b)
 
 !      btemp=b
 

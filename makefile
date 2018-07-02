@@ -1,8 +1,8 @@
 FC=gfortran
 PGM     = cgw
-SRC     = $(PGM).f base.f gaussj.f initial.f
+SRC     = $(PGM).f base.f initial.f gaussj.f
 
-OBJ     = $(PGM).o base.o gaussj.o initial.o
+OBJ     = $(PGM).o base.o initial.o gaussj.f
 
 default: $(PGM)
 

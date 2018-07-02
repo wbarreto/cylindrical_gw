@@ -40,7 +40,7 @@
  
       double precision pi
 
-      integer n,m,DIM
+      integer n,DIM,m
       integer i,k,nn
 
       pi=4.d0*datan(1.d0)

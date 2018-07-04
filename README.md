@@ -15,6 +15,9 @@ Evolving (compiling well and living code):
 - maximal dimensions and allocations (base.inc)
 - Solver for a linear system of equations (gaussj.f) (from Numerical Recipes)
 - Initial data (initial.f)
+- Dynamical system (dynsys.f) (already in construction)
+- Ordinary differential equations solver (rk.4)
+- Metric functions and its spatial derivatives (metric.f)
 
 NOTES:
 
@@ -27,9 +30,8 @@ Check only one of these stages:
 
 TO DO (next tasks):
 
-- Adapt metric.f, dynsys.f, rk.f, ko.f (standard Kreiss-Oliger noise filter,
-  if necessary), io.f; 
-- write the pseudo code;
+- Adapt ko.f (standard Kreiss-Oliger noise filter, if necessary), io.f; 
+- Write the pseudo code;
 - Algorithmic;
 - Code's history, referential Maple script and pre-codes;
 - F90, C and Python versions;

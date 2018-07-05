@@ -47,13 +47,15 @@
 
       SBPSI=0.d0
       SBDPSI=0.d0
+      SBDDPSI=0.d0
       SBOMEGA=0.d0
       SBDOMEGA=0.d0
+      SBDDOMEGA=0.d0
       SGRID=0.d0
 
       call frame(n,m,y0,L0,NMAX,
-     .           SBPSI,SBDPSI,
-     .           SBOMEGA,SBDOMEGA,
+     .           SBPSI,SBDPSI,SBDDPSI,
+     .           SBOMEGA,SBDOMEGA,SBDDOMEGA,
      .           SGRID)
 
 
@@ -69,31 +71,29 @@
 !     .                 n,m,a,f,c,b,0.d0,itime,iref,done)
 
 
-!      itimemax=timemax/h
+      itimemax=timemax/h
 
-!      done=.false.
+      done=.false.
 
-!      do while (.not. done)
+      do while (.not. done)
 
-!       time=dble(itime+1)*h
+       time=dble(itime+1)*h
 
         
-!       call dynsys(n,m,f,b,a,c,df,da,dc)
+       call dynsys(n,m,a,b,da,db)
 
-!       call rk4(n,m,h,b,f,a,c,df,da,dc,f,a,c)
+       call rk4(n,m,h,a,b,da,db,a,b)
 
-!       call constraint(n,m,f,a,c,b)
+       if(time.ge.timemax) done=.true.
 
-!       if(time.ge.timemax) done=.true.
-
-!       itime=itime+1
+       itime=itime+1
 
 !        if(mod(itime,idump).eq.0) then
 !          call write_files(fp_data,fp_seq,fp_asymp,
 !     .                     n,m,a,f,c,b,time,itime,iref,done)
 !        end if
 
-!      end do
+      end do
  
 !      close(fp_seq)
 !      close(fp_asymp)

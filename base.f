@@ -1,6 +1,6 @@
       subroutine frame(n,m,y0,L0,DIM,
-     .                 SBPSI,SBDPSI,
-     .                 SBOMEGA,SBDOMEGA,
+     .                 SBPSI,SBDPSI,SBDDPSI,
+     .                 SBOMEGA,SBDOMEGA,SBDDOMEGA,
      .                 SGRID)
 
       implicit none
@@ -22,6 +22,10 @@
 
       double precision dxi21,dxi22
 
+      double precision BDDPSI1N(n,n+1),BDDPSI2N(n,n+1)
+ 
+      double precision ddxi21,ddxi22
+
       double precision BOMEGA1N(n,n+1),BOMEGA2N(n,n+1)
 
       double precision chi31,chi32
@@ -33,8 +37,13 @@
 
       double precision dchi31, dchi32
 
-      double precision SBPSI(DIM,DIM), SBDPSI(DIM,DIM)
-      double precision SBOMEGA(DIM,DIM), SBDOMEGA(DIM,DIM)
+      double precision BDDOMEGA1N(n,n+1),BDDOMEGA2N(n,n+1)
+
+      double precision ddchi31, ddchi32
+
+      double precision SBPSI(DIM,DIM), SBDPSI(DIM,DIM), SBDDPSI(DIM,DIM)
+      double precision SBOMEGA(DIM,DIM), SBDOMEGA(DIM,DIM), 
+     .                 SBDDOMEGA(DIM,DIM)
 
       double precision SGRID(DIM)
  
@@ -113,6 +122,28 @@
         end do
       end do
 
+!------------------------------------------
+! Base for \partial_yy PSI
+!------------------------------------------
+
+! Base for DDPSI D1 N (BDDPSI1N)
+
+      do nn=0,n
+        do k=1,n
+          y=y1n(k)
+          BDDPSI1N(k,nn+1)=ddxi21(nn,y0,y)
+        end do
+      end do
+
+! Base for DDPSI D2 N
+
+      do nn=0,n
+        do k=1,n
+          y=y2n(k)
+          BDDPSI2N(k,nn+1)=ddxi22(nn,y0,L0,y)
+        end do
+      end do
+
 !----------------------------------------------
 ! Matching for PSI and DPSI
 !----------------------------------------------
@@ -162,27 +193,37 @@
 !----------------------------------------------
 ! Super Base for DPSI
 !----------------------------------------------
-
 ! Set to zero
-
       SBDPSI=0.d0
-
 ! Sector D1 N
-
       do nn=0,n
         do k=1,n
            SBDPSI(k,nn+1)=BDPSI1N(k,nn+1)
         end do
       end do
-
 ! Sector D2 N
-
       do nn=0,n
         do k=1,n
            SBDPSI(k+n,nn+n+2)=BDPSI2N(k,nn+1)
         end do
       end do
-
+!----------------------------------------------
+! Super Base for DDPSI
+!----------------------------------------------
+! Set to zero
+      SBDDPSI=0.d0
+! Sector D1 N
+      do nn=0,n
+        do k=1,n
+           SBDDPSI(k,nn+1)=BDDPSI1N(k,nn+1)
+        end do
+      end do
+! Sector D2 N
+      do nn=0,n
+        do k=1,n
+           SBDDPSI(k+n,nn+n+2)=BDDPSI2N(k,nn+1)
+        end do
+      end do
 
 !------------------------------------------
 ! Base for OMEGA
@@ -227,6 +268,29 @@
         end do
       end do
 
+!------------------------------------------
+! Base for \partial_yy OMEGA
+!------------------------------------------
+
+! Base for DDOMEGA D1 N (BDDOMEGA1N)
+
+      do nn=0,n
+        do k=1,n
+          y=y1n(k)
+          BDDOMEGA1N(k,nn+1)=ddchi31(nn,y0,y)
+        end do
+      end do
+
+! Base for DDOMEGA D2 N
+
+      do nn=0,n
+        do k=1,n
+          y=y2n(k)
+          BDDOMEGA2N(k,nn+1)=ddchi32(nn,y0,L0,y)
+        end do
+      end do
+
+
 !----------------------------------------------
 ! Matching for OMEGA 
 !----------------------------------------------
@@ -243,21 +307,15 @@
 !----------------------------------------------
 ! Super Base for OMEGA
 !----------------------------------------------
-
 ! set to zero
-
       SBOMEGA=0.d0
-
 ! Sector D1 N
-
       do nn=0,n
         do k=1,n
            SBOMEGA(k,nn+1)=BOMEGA1N(k,nn+1)
         end do
       end do
-
 ! Sector D2 N
-
       do nn=0,n
         do k=1,n
            SBOMEGA(k+n,nn+n+2)=BOMEGA2N(k,nn+1)
@@ -276,29 +334,40 @@
 !----------------------------------------------
 ! Super Base for DOMEGA
 !----------------------------------------------
-
 ! Set to zero
-
       SBDOMEGA=0.d0
-
 ! Sector D1 N
-
       do nn=0,n
         do k=1,n
            SBDOMEGA(k,nn+1)=BDOMEGA1N(k,nn+1)
         end do
       end do
-
 ! Sector D2 N
-
       do nn=0,n
         do k=1,n
            SBDOMEGA(k+n,nn+n+2)=BDOMEGA2N(k,nn+1)
         end do
       end do
+!----------------------------------------------
+! Super Base for DDOMEGA
+!----------------------------------------------
+! Set to zero
+      SBDDOMEGA=0.d0
+! Sector D1 N
+      do nn=0,n
+        do k=1,n
+           SBDDOMEGA(k,nn+1)=BDDOMEGA1N(k,nn+1)
+        end do
+      end do
+! Sector D2 N
+      do nn=0,n
+        do k=1,n
+           SBDDOMEGA(k+n,nn+n+2)=BDDOMEGA2N(k,nn+1)
+        end do
+      end do
 
       end subroutine frame
-
+!------------------------------------------------
       double precision function T(n,y)
         implicit none
         integer n
@@ -318,6 +387,23 @@
         end if
       end function dT
 
+      double precision function ddT(n,y)
+      implicit none
+        integer n
+        double precision x,y,dT
+        x=dacos(y)
+        if((y.eq.-1.d0).or.(y.eq.1.d0)) then
+          ddT=dble(n)*dsin(dble(n)*x)*(dble(n*n)/2.d0-1.d0/3.d0)
+     .        /(dsin(x)*dcos(x))
+     .        + dble(n*n)*dcos(dble(n)*x)
+     .        /(3.d0*dsin(x)**2.d0)
+        else
+          ddT=-dble(n*n)*dcos(dble(n)*x)/(dsin(x)**2.d0)
+     .        +dble(n)*dcos(x)*dsin(dble(n)*x)/(dsin(x)**3.d0)
+        end if
+      end function ddT
+
+
       double precision function TL1(n,y0,y)
         implicit none
         double precision T,y,ji,y0
@@ -333,6 +419,14 @@
         ji=2.d0*y/y0-1.d0
         dTL1=(2.d0/y0)*dT(n,ji)
       end function dTL1
+
+      double precision function ddTL1(n,y0,y)
+        implicit none
+        double precision y0,y,ddT,ji
+        integer n
+        ji=2.d0*y/y0-1.d0
+        ddTL1=(2.d0/y0)*ddT(n,ji)
+      end function ddTL1
 
       double precision function TL2(n,y0,L0,y)
         implicit none
@@ -350,6 +444,16 @@
         dTL2=(2.d0*L0/(y-y0+L0)**2.d0)*dT(n,ji)
       end function dTL2
 
+      double precision function ddTL2(n,y0,L0,y)
+        implicit none
+        double precision ddT,dT,y0,y,ji,L0,dji,ddji
+        integer n
+        ji=(y-y0-L0)/(y-y0+L0)
+        dji=2.d0*L0/(y-y0+L0)**2.d0
+        ddji=-4.d0*L0/(y-y0+L0)**3.d0
+        ddTL2=dji*ddT(n,ji)+ddji*dT(n,ji)
+      end function ddTL2
+
       double precision function xi21(n,y0,y)
         implicit none
         integer n
@@ -363,6 +467,13 @@
         double precision dTL1,y,y0
         dxi21=0.5d0*(dTL1(n+1,y0,y)+dTL1(n,y0,y))
       end function dxi21
+
+      double precision function ddxi21(n,y0,y)
+        implicit none
+        integer n
+        double precision ddTL1,y,y0
+        ddxi21=0.5d0*(ddTL1(n+1,y0,y)+ddTL1(n,y0,y))
+      end function ddxi21
 
       double precision function chi2(n,y0,y)
         implicit none
@@ -382,6 +493,15 @@
         dchi2=a*dchi0(n+1,y0,y)+b*dchi0(n,y0,y)
       end function dchi2
 
+      double precision function ddchi2(n,y0,y)
+        implicit none
+        integer n
+        double precision ddchi0,y,y0,a,b
+        a=1.d0/2.d0
+        b=a*(3.d0+2.d0*n)/(1.d0+2.d0*n)
+        ddchi2=a*ddchi0(n+1,y0,y)+b*ddchi0(n,y0,y)
+      end function ddchi2
+
       double precision function chi0(n,y0,y)
         implicit none
         integer n
@@ -395,6 +515,13 @@
         double precision y,y0,dTL1,a,b
         dchi0=0.5d0*(dTL1(n+1,y0,y)+dTL1(n,y0,y))
       end function dchi0
+
+      double precision function ddchi0(n,y0,y)
+        implicit none
+        integer n
+        double precision y,y0,ddTL1,a,b
+        ddchi0=0.5d0*(ddTL1(n+1,y0,y)+ddTL1(n,y0,y))
+      end function ddchi0
 
       double precision function chi31(n,y0,y)
         implicit none
@@ -414,6 +541,15 @@
         dchi31=a*b*dchi2(n+1,y0,y)+b*dchi2(n,y0,y)
       end function dchi31
 
+      double precision function ddchi31(n,y0,y)
+        implicit none
+        integer n
+        double precision ddchi2,y0,y,a,b
+        a=(2.d0*n*n+5.d0*n+3.d0)/(2.d0*(n+1.d0)**2+5.d0*(n+1)+3.d0)
+        b=-0.25d0
+        ddchi31=a*b*ddchi2(n+1,y0,y)+b*ddchi2(n,y0,y)
+      end function ddchi31
+
       double precision function xi22(n,y0,L0,y)
         implicit none
         integer n
@@ -428,6 +564,13 @@
         dxi22=dTL2(n,y0,L0,y)
       end function dxi22
 
+      double precision function ddxi22(n,y0,L0,y)
+        implicit none
+        integer n
+        double precision ddTL2,y0,y,L0
+        ddxi22=ddTL2(n,y0,L0,y)
+      end function ddxi22
+
       double precision function chi32(n,y0,L0,y)
         implicit none
         integer n
@@ -441,3 +584,10 @@
         double precision dTL2,y0,y,L0
         dchi32=dTL2(n,y0,L0,y)
       end function dchi32
+
+      double precision function ddchi32(n,y0,L0,y)
+        implicit none
+        integer n
+        double precision ddTL2,y0,y,L0
+        ddchi32=ddTL2(n,y0,L0,y)
+      end function ddchi32

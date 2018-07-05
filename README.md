@@ -23,14 +23,16 @@ NOTES:
 
 Check only one of these stages:
 
-- still developing (check) (50%)
+- still developing (check) (90%)
 - still debugging
 - still not used in production
 - in production 
 
 TO DO (next tasks):
 
-- Adapt ko.f (standard Kreiss-Oliger noise filter, if necessary), io.f; 
+- Adapt ko.f (standard Kreiss-Oliger noise filter, if necessary), 
+  io.f (here is up to now the calculation post-integration at each time-step),
+  mass.f (could be an external function for io.f, still thinking about it.)
 - Write the pseudo code;
 - Algorithmic;
 - Code's history, referential Maple script and pre-codes;

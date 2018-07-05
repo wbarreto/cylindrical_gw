@@ -7,7 +7,7 @@
 
         double precision PSI(2*n),OMEGA(2*n),y(2*n)
         double precision dPSI(2*n),dOMEGA(2*n)
-        double precision d2PSI(2*n),d2OMEGA(2*n)
+        double precision ddPSI(2*n),ddOMEGA(2*n)
 
         double precision RHS1(2*n), RHS2(2*n) 
         double precision M_EXT(4*(n+1),4*(n+1))
@@ -17,18 +17,15 @@
 
         pi=4.d0*datan(1.d0)
 !
-!
 !   Dynamical system as one...
 !
-        call metric_PSI(n,n,a,PSI,dPSI)
-        call metric_OMEGA(n,n,b,OMEGA,dOMEGA)
+        call metric_PSI(n,n,a,PSI,dPSI,ddPSI)
+        call metric_OMEGA(n,n,b,OMEGA,dOMEGA,ddOMEGA)
 
 !   First evolution equation
         
         y=SGRID
-!                      |¬ Remember include this second derivative in metric... base
-!                      |
-        RHS1=0.25d0*(d2PSI-dPSI/y+PSI/y**2.d0)
+        RHS1=0.25d0*(ddPSI-dPSI/y+PSI/y**2.d0)
         RHS2=-0.125d0*dexp(4.d0*PSI/y)*(OMEGA+y*dOMEGA)**2.d0/y**3.d0
        
         do i=1,2*n 
@@ -54,9 +51,7 @@
 ! In similar way follows the second evolution equation
 
         RHS1=0.25d0*y**2.d0*(-3.d0*(OMEGA+y*dOMEGA)/y**4.d0+
-     .       (2.d0*dOMEGA+y*d2OMEGA)/y**3.d0)
-!                              |
-!                              |¬ Remember include this second derivative in metric... base
+     .       (2.d0*dOMEGA+y*ddOMEGA)/y**3.d0)
         RHS2=(OMEGA+y*dOMEGA)*(dPSI/y-PSI/y**2.d0)/y
 
         do i=1,2*n

@@ -2,7 +2,7 @@
 
 Developer(s): W. Barreto
 Initial date (of developing):      29.06.18
-Final date (ready for production): 
+Final date (ready for production): 13.07.18 
 
 CHANGELOG:
 
@@ -25,8 +25,8 @@ NOTES:
 
 Check only one of these stages:
 
-- still developing &  debugging (check)
-- still not used in production
+- still developing &  debugging 
+- still not used in production (check)
 - in production 
 
 TO DO (next tasks):

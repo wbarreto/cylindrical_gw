@@ -1,43 +1,77 @@
-      subroutine metric_A(n,ny,c,A,dA)
+      subroutine metric_PSI(n,ny,a,PSI,dPSI,ddPSI)
       implicit none
       include 'base.inc'
       integer n,ny,i,k
-      double precision c(2*(n+1)), sum1, sum2, A(2*ny), dA(2*ny)
-      do k=1,2*ny
-        sum1=0.d0
-        sum2=0.d0
-        do i=1,2*(n+1)
-          if(ny.eq.n) then
-            sum1=sum1+SBA(k,i)*c(i)
-            sum2=sum2+SBDA(k,i)*c(i)
-          else
-            sum1=sum1+SBA(k+2*n+2,i)*c(i)
-            sum2=sum2+SBDA(k+2*n,i)*c(i)
-          end if
-        end do
-        A(k)=1.d0+sum1
-        dA(k)=sum2
-      end do
-      end subroutine metric_A
+      double precision a(2*(n+1)), sum1, sum2, PSI(2*ny), dPSI(2*ny),
+     .                 ddPSI(2*ny),sum3
 
-      subroutine metric_delta(n,ny,b,delta,ddelta)
+!  Domain 1
+      do k=1,n
+        sum1=0.d0
+        sum2=0.d0
+        sum3=0.d0
+        do i=1,n+1
+            sum1=sum1+SBPSI(k,i)*a(i)
+            sum2=sum2+SBDPSI(k,i)*a(i)
+            sum3=sum3+SBDDPSI(k,i)*a(i)
+        end do
+        PSI(k)=sum1
+        dPSI(k)=sum2
+        ddPSI(k)=sum3
+      end do
+! Domain 2
+      do k=n+1,2*n
+        sum1=0.d0
+        sum2=0.d0
+        sum3=0.d0
+        do i=n+2,2*(n+1)
+            sum1=sum1+SBPSI(k,i)*a(i)
+            sum2=sum2+SBDPSI(k,i)*a(i)
+            sum3=sum3+SBDDPSI(k,i)*a(i)
+        end do
+        PSI(k)=sum1
+        dPSI(k)=sum2
+        ddPSI(k)=sum3
+      end do
+      end subroutine metric_PSI
+
+      subroutine metric_OMEGA(n,ny,b,OMEGA,dOMEGA,ddOMEGA)
       implicit none
       include 'base.inc'
       integer n,ny,i,k
-      double precision b(2*(n+1)), sum1, sum2, delta(2*ny), ddelta(2*ny)
-      do k=1,2*ny
+      double precision b(2*(n+1)),sum1,sum2,OMEGA(2*ny),dOMEGA(2*ny),
+     .                 ddOMEGA(2*ny),sum3
+
+! I tested that the split of two domain it is not necessary here...
+! Because the way in which the super base is constructed (using the
+! mask trick).
+
+! Domain 1
+      do k=1,n
         sum1=0.d0
         sum2=0.d0
-        do i=1,2*(n+1)
-          if(ny.eq.n) then
-            sum1=sum1+SBD(k,i)*b(i)
-            sum2=sum2+SBDD(k,i)*b(i)
-          else
-            sum1=sum1+SBD(k+2*n+2,i)*b(i)
-            sum2=sum2+SBDD(k+2*n,i)*b(i)
-          end if
+        sum3=0.d0
+        do i=1,n+1
+            sum1=sum1+SBOMEGA(k,i)*b(i)
+            sum2=sum2+SBDOMEGA(k,i)*b(i)
+            sum3=sum3+SBDDOMEGA(k,i)*b(i)
         end do
-        delta(k)=sum1
-        ddelta(k)=sum2
+        OMEGA(k)=sum1
+        dOMEGA(k)=sum2
+        ddOMEGA(k)=sum3
       end do
-      end subroutine metric_delta
+! Domain 2
+      do k=n+1,2*n
+        sum1=0.d0
+        sum2=0.d0
+        sum3=0.d0
+        do i=n+2,2*(n+1)
+            sum1=sum1+SBOMEGA(k,i)*b(i)
+            sum2=sum2+SBDOMEGA(k,i)*b(i)
+            sum3=sum3+SBDDOMEGA(k,i)*b(i)
+        end do
+        OMEGA(k)=sum1
+        dOMEGA(k)=sum2
+        ddOMEGA(k)=sum3
+      end do
+      end subroutine metric_OMEGA

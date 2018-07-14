@@ -33,12 +33,12 @@
 
       read (*,input) 
 
-!      fp_data=21
-!      fp_seq=28
-!      fp_asymp=35
+      fp_data=21
+      fp_seq=28
+      fp_asymp=35
 
-!      open(unit=fp_seq,file='seq.gnu',status='unknown')
-!      open(unit=fp_asymp,file='asymp.gr',status='unknown')
+      open(unit=fp_seq,file='seq.gnu',status='unknown')
+      open(unit=fp_asymp,file='asymp.gr',status='unknown')
 
       a=0.d0
       b=0.d0
@@ -59,16 +59,13 @@
      .           SGRID)
 
 
-!      do i=1,2*(m+1)
-!        write(*,*) i, SBD(2*m+1,i),SBD(2*m+2,i)
-!      end do
-
       call initial(n,m,A0,B0,a,b)
+      
+!      write(*,'(i3,e16.8)') (i,a(i),i=1,2*(n+1))
+!      write(*,'(i3,e16.8)') (i+2*(n+1),b(i),i=1,2*(n+1))
 
-!      btemp=b
-
-!      call write_files(fp_data,fp_seq,fp_asymp,
-!     .                 n,m,a,f,c,b,0.d0,itime,iref,done)
+      call write_files(fp_data,fp_seq,fp_asymp,
+     .                 n,m,a,b,0.d0,itime,iref,done)
 
 
       itimemax=timemax/h
@@ -77,26 +74,33 @@
 
       do while (.not. done)
 
+
+       call dynsys(n,m,L0,a,b,da,db)
+
+!       write(*,*) time, a(1)
+
        time=dble(itime+1)*h
 
-        
-       call dynsys(n,m,a,b,da,db)
+!      write(*,'(i3,e16.8)') (i+2*(n+1),db(i),i=1,2*(n+1))
 
-       call rk4(n,m,h,a,b,da,db,a,b)
+       call rk4(n,m,L0,h,a,b,da,db,a,b)
+
+!       write(*,'(i3,2e10.2)') (i,a(i),b(i),i=1,2*(n+1))
+     
 
        if(time.ge.timemax) done=.true.
 
        itime=itime+1
 
-!        if(mod(itime,idump).eq.0) then
-!          call write_files(fp_data,fp_seq,fp_asymp,
-!     .                     n,m,a,f,c,b,time,itime,iref,done)
-!        end if
+        if(mod(itime,idump).eq.0) then
+          call write_files(fp_data,fp_seq,fp_asymp,
+     .                     n,m,a,b,time,itime,iref,done)
+        end if
 
       end do
  
-!      close(fp_seq)
-!      close(fp_asymp)
+      close(fp_seq)
+      close(fp_asymp)
 
       end program cgw    
 

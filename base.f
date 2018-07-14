@@ -70,6 +70,16 @@
         y2n(k)=y0+L0*(1.d0+ji)/(1.d0-ji)
       end do
 
+!      do k=1,n
+!        ji=dcos(pi*dble(k)/dble(n+1))
+!        y1n(k)=0.5d0*y0*(1.d0+ji)
+!      end do
+
+!      do k=1,n
+!        ji=dcos(pi*dble(k)/dble(n+1))
+!        y2n(k)=y0+L0*(1.d0+ji)/(1.d0-ji)
+!      end do
+
 ! Super Grid
 
        SGRID=0.d0
@@ -381,7 +391,7 @@
         double precision x,y
         x=dacos(y)
         if((y.eq.-1.d0).or.(y.eq.1.d0)) then
-          dT=dble(n*n)*dcos(dble(n*x))/dcos(x)
+          dT=dble(n*n)*dcos(dble(n)*x)/dcos(x)
         else
           dT=dble(n)*dsin(dble(n)*x)/dsin(x)
         end if
@@ -398,9 +408,9 @@
      .        + dble(n*n)*dcos(dble(n)*x)
      .        /(3.d0*dsin(x)**2.d0)
         else
-          ddT=-dble(n*n)*dcos(dble(n)*x)/(dsin(x)**2.d0)
-     .        +dble(n)*dcos(x)*dsin(dble(n)*x)/(dsin(x)**3.d0)
-        end if
+           ddT=-dble(n*n)*dcos(dble(n)*x)/(dsin(x)**2.d0)
+     .     +dble(n)*dcos(x)*dsin(dble(n)*x)/(dsin(x)**3.d0)
+         end if
       end function ddT
 
 
@@ -425,7 +435,7 @@
         double precision y0,y,ddT,ji
         integer n
         ji=2.d0*y/y0-1.d0
-        ddTL1=(2.d0/y0)*ddT(n,ji)
+        ddTL1=(2.d0/y0)*(2.d0/y0)*ddT(n,ji)
       end function ddTL1
 
       double precision function TL2(n,y0,L0,y)
@@ -451,7 +461,7 @@
         ji=(y-y0-L0)/(y-y0+L0)
         dji=2.d0*L0/(y-y0+L0)**2.d0
         ddji=-4.d0*L0/(y-y0+L0)**3.d0
-        ddTL2=dji*ddT(n,ji)+ddji*dT(n,ji)
+        ddTL2=dji*dji*ddT(n,ji)+ddji*dT(n,ji)
       end function ddTL2
 
       double precision function xi21(n,y0,y)
@@ -528,7 +538,7 @@
         integer n
         double precision chi2,y0,y,a,b
         a=(2.d0*n*n+5.d0*n+3.d0)/(2.d0*(n+1.d0)**2+5.d0*(n+1)+3.d0)
-        b=-0.25d0
+        b=0.25d0
         chi31=a*b*chi2(n+1,y0,y)+b*chi2(n,y0,y)
       end function chi31
 
@@ -537,7 +547,7 @@
         integer n
         double precision dchi2,y0,y,a,b
         a=(2.d0*n*n+5.d0*n+3.d0)/(2.d0*(n+1.d0)**2+5.d0*(n+1)+3.d0)
-        b=-0.25d0
+        b=0.25d0
         dchi31=a*b*dchi2(n+1,y0,y)+b*dchi2(n,y0,y)
       end function dchi31
 
@@ -546,7 +556,7 @@
         integer n
         double precision ddchi2,y0,y,a,b
         a=(2.d0*n*n+5.d0*n+3.d0)/(2.d0*(n+1.d0)**2+5.d0*(n+1)+3.d0)
-        b=-0.25d0
+        b=0.25d0
         ddchi31=a*b*ddchi2(n+1,y0,y)+b*ddchi2(n,y0,y)
       end function ddchi31
 

@@ -45,7 +45,7 @@
       double precision SBOMEGA(DIM,DIM), SBDOMEGA(DIM,DIM), 
      .                 SBDDOMEGA(DIM,DIM)
 
-      double precision SGRID(DIM)
+      double precision SGRID(DIM), jiold
  
       double precision pi
 
@@ -59,15 +59,19 @@
 !------------------------------------------
 
 ! Grid D1 N
-
+!      jiold=-1.d0
       do k=1,n
         ji=dcos(pi*dble(n+1-k)/dble(n+1))
         y1n(k)=0.5d0*y0*(1.d0+ji)
+!        write(*,*) k,ji-jiold,ji
+!        jiold=ji
       end do
-
+!      jiold=-1.d0
       do k=1,n
         ji=dcos(pi*dble(n+1-k)/dble(n+1))
         y2n(k)=y0+L0*(1.d0+ji)/(1.d0-ji)
+!        write(*,*) k+n,ji-jiold,ji
+!        jiold=ji
       end do
 
 !      do k=1,n

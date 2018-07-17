@@ -19,8 +19,8 @@ Evolving (compiling well and living code):
 - Ordinary differential equations solver (rk.4)
 - Metric functions and its spatial derivatives (metric.f)
 - Input (initial spectral modes or integrated ones) Output (metric functions evolution;
-  Bondi mass and Weyl scalar). (io.f) (here is up to now the calculation post-integration
-  at each time-step); (bondi_mass.f; weyl_scalar.f).  
+  Bondi mass and Weyl scalar). (io.f) (write_files) (here is the calculation post-integration
+  at each time-step); (write_asymp).  
 NOTES:
 
 Check only one of these stages:

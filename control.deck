@@ -9,6 +9,7 @@
    h=1.d-4,
    itime=0,
    idump=1000,
+   idumps=100,
    iref=1,
    AMR=0.5d0,
    y0=2.5d0,

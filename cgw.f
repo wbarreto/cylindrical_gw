@@ -10,7 +10,7 @@
 
       implicit none
 
-      integer itimemax,itime,idump,iref
+      integer itimemax,itime,idump,iref,idumps
 
       integer n,m,i,j
 
@@ -29,7 +29,7 @@
       logical done
      
       namelist/input/n,m,A0,B0,S,r0,timemax,
-     .               h,itime,idump,iref,amr,y0,L0
+     .               h,itime,idump,idumps,iref,amr,y0,L0
 
       read (*,input) 
 
@@ -64,9 +64,10 @@
 !      write(*,'(i3,e16.8)') (i,a(i),i=1,2*(n+1))
 !      write(*,'(i3,e16.8)') (i+2*(n+1),b(i),i=1,2*(n+1))
 
-      call write_files(fp_data,fp_seq,fp_asymp,
-     .                 n,m,a,b,0.d0,itime,iref,done)
+      call write_files(fp_data,fp_seq,
+     .                 n,m,y0,L0,a,b,0.d0,itime,iref,done)
 
+      call write_asymp (n,y0,L0,a,b,fp_asymp,0.d0)
 
       itimemax=timemax/h
 
@@ -76,6 +77,7 @@
 
 
        call dynsys(n,m,L0,a,b,da,db)
+
 
 !       write(*,*) time, a(1)
 
@@ -92,10 +94,13 @@
 
        itime=itime+1
 
-        if(mod(itime,idump).eq.0) then
-          call write_files(fp_data,fp_seq,fp_asymp,
-     .                     n,m,a,b,time,itime,iref,done)
-        end if
+       if(mod(itime,idump).eq.0) then
+          call write_files(fp_data,fp_seq,
+     .                     n,m,y0,L0,a,b,time,itime,iref,done)
+       end if
+       if(mod(itime,idumps).eq.0) then
+          call write_asymp (n,y0,L0,a,b,fp_asymp,time)
+       end if
 
       end do
  

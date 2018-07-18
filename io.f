@@ -82,7 +82,7 @@
           end if
         end do
 
-        GAMMAy=0.5d0*y*(dPSI/y-PSI/y**2.d0)*2.d0
+        GAMMAy=0.5d0*y*(dPSI/y-PSI/y**2.d0)**2.d0
      .        +dexp(4.d0*PSI/y)*(y*dOMEGA+OMEGA)**2.d0/(8.d0*y**3.d0)
 
         GAMMAx=dydx*GAMMAy
